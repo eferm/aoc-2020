@@ -1,5 +1,6 @@
 # Copyright Ryan Norris https://github.com/rynorris/adventofcode
 import os
+import re
 
 import requests
 from dotenv import load_dotenv
@@ -52,9 +53,14 @@ def _cached_input_path(year, day):
     return os.path.join(INPUTS_DIR, filename)
 
 
-def lmap(func, x):
-    return list(map(func, x))
+def lmap(f, *seqs):
+    return list(map(f, *seqs))
 
 
-def lfilter(func, x):
-    return list(filter(func, x))
+def lfilter(f, seq):
+    return list(filter(f, seq))
+
+
+def filterre(r, seq):
+    regex = re.compile(r)
+    return lfilter(regex.search, seq)
