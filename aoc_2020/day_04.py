@@ -30,41 +30,30 @@ print(valid)
 
 
 # part 2
-valid_passports = 0
+def validate_hgt(field):
+    if match := re.compile(r"(\d{2,3})(\w+)").match(field):
+        num, unit = match.groups()
+        if unit == "cm" and 150 <= int(num) <= 193:
+            return True
+        if unit == "in" and 59 <= int(num) <= 76:
+            return True
+    return False
+
+
+validators = {
+    "byr": lambda x: 1920 <= int(x) <= 2002,
+    "iyr": lambda x: 2010 <= int(x) <= 2020,
+    "eyr": lambda x: 2020 <= int(x) <= 2030,
+    "hgt": validate_hgt,
+    "hcl": lambda x: bool(re.match(r"#[0-9a-f]{6}", x)),
+    "ecl": lambda x: x in ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"],
+    "pid": lambda x: bool(re.match(r"^\d{9}$", x)),
+    "cid": lambda x: False,
+}
+
+valid = 0
 for passport in passports:
-    valid = 0
-    for field in passport.split("\n"):
-        code, value = field[:3], field[4:]
-        if code == "byr" and 1920 <= int(value) <= 2002:
-            valid += 1
-        elif code == "iyr" and 2010 <= int(value) <= 2020:
-            valid += 1
-        elif code == "eyr" and 2020 <= int(value) <= 2030:
-            valid += 1
-        elif code == "hgt":
-            regex = re.compile(r"(\d{2,3})(\w+)")
-            if match := regex.match(value):
-                num, unit = match.groups()
-                if unit == "cm" and 150 <= int(num) <= 193:
-                    valid += 1
-                elif unit == "in" and 59 <= int(num) <= 76:
-                    valid += 1
-        elif code == "hcl" and re.match(r"#[0-9a-f]{6}", value):
-            valid += 1
-        elif code == "ecl" and value in [
-            "amb",
-            "blu",
-            "brn",
-            "gry",
-            "grn",
-            "hzl",
-            "oth",
-        ]:
-            valid += 1
-        elif code == "pid" and re.match(r"^\d{9}$", value):
-            valid += 1
+    validated = lmap(lambda x: validators[x[:3]](x[4:]), passport.split("\n"))
+    valid += 1 if sum(lmap(int, validated)) == len(required) else 0
 
-    if valid == len(required):
-        valid_passports += 1
-
-print(valid_passports)
+print(valid)
