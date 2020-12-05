@@ -14,5 +14,9 @@
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
         "--ignore=E402,E731,F403,F405",
+    ],
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "79"
     ]
 }
