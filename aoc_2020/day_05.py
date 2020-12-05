@@ -6,9 +6,16 @@ seats = inp.strip().split("\n")
 # part 1
 ids = []
 for seat in seats:
-    y = seat[:7].replace("F", "0").replace("B", "1")
-    x = seat[7:].replace("L", "0").replace("R", "1")
-    ids.append(int(y, 2) * 8 + int(x, 2))
+    bits = translate(
+        {
+            "F": "0",
+            "B": "1",
+            "L": "0",
+            "R": "1",
+        },
+        seat,
+    )
+    ids.append(int(bits, 2))
 
 print(max(ids))
 
