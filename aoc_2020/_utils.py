@@ -64,3 +64,7 @@ def lfilter(f, seq):
 def filterre(r, seq):
     regex = re.compile(r)
     return lfilter(regex.search, seq)
+
+
+def translate(mapping, s):
+    return s.translate(str.maketrans(mapping))
