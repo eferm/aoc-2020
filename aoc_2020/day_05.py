@@ -1,7 +1,7 @@
 from _utils import *
 
 inp = get_input(2020, 5)
-seats = inp.strip().split("\n")
+seats = inp.strip().split()
 
 
 def seat_id(seat):
@@ -15,6 +15,7 @@ ids = lmap(seat_id, seats)
 print(max(ids))
 
 # part 2
+# pairwise diff
 it = iter(sorted(ids))
-x = [(i + j) // 2 for i, j in zip(it, it) if i + 1 < j]
-print(x.pop())
+x = ((i + j) // 2 for i, j in zip(it, it) if i + 1 < j)
+print(next(x))
