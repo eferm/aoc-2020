@@ -16,5 +16,5 @@ print(max(ids))
 
 # part 2
 it = iter(sorted(ids))
-x = [t for t in zip(it, it) if t[0] + 1 < t[1]]
-print(sum(x.pop()) // 2)
+x = [(i + j) // 2 for i, j in zip(it, it) if i + 1 < j]
+print(x.pop())
