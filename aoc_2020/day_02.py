@@ -3,7 +3,7 @@ from collections import Counter
 from _utils import *
 
 inp = get_input(2020, 2)
-lines = inp.strip().split("\n")
+lines = inp.strip().split()
 
 
 def split(line):
