@@ -10,7 +10,7 @@ def count(agg, group):
 
 
 # part 1
-print(sum(lmap(partial(count, set.union), groups)))
+print(sum(map(partial(count, set.union), groups)))
 
 # part 2
-print(sum(lmap(partial(count, set.intersection), groups)))
+print(sum(map(partial(count, set.intersection), groups)))
