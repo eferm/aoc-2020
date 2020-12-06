@@ -2,34 +2,28 @@ import re
 from _utils import *
 
 inp = get_input(2020, 4)
-# print(inp[:80])
-
 
 passports = inp.strip().split("\n\n")
 passports = lmap(lambda s: s.replace(" ", "\n"), passports)
 
-required = [
-    "byr",
-    "iyr",
-    "eyr",
-    "hgt",
-    "hcl",
-    "ecl",
-    "pid",
-    # "cid",
-]
+required = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+
 
 # part 1
-valid = 0
-for passport in passports:
-    fields = [s[:3] for s in passport.split("\n")]
-    if len(set(fields).intersection(required)) == len(required):
-        valid += 1
 
-print(valid)
+
+def validate1(passport):
+    fields = [s[:3] for s in passport.split()]
+    return len(set(fields).intersection(required)) == len(required)
+
+
+valid = map(validate1, passports)
+print(sum(valid))
 
 
 # part 2
+
+
 def validate_hgt(field):
     if match := re.compile(r"(\d{2,3})(\w+)").match(field):
         num, unit = match.groups()
@@ -51,9 +45,11 @@ validators = {
     "cid": lambda x: False,
 }
 
-valid = 0
-for passport in passports:
-    validated = lmap(lambda x: validators[x[:3]](x[4:]), passport.split("\n"))
-    valid += 1 if sum(lmap(int, validated)) == len(required) else 0
 
-print(valid)
+def validate2(passport):
+    res = map(lambda x: validators[x[:3]](x[4:]), passport.split())
+    return sum(res) == len(required)
+
+
+valid = map(validate2, passports)
+print(sum(valid))
