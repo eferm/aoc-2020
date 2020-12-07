@@ -1,55 +1,67 @@
-from _utils import *
+import re
 from collections import defaultdict
+from _utils import *
+
 
 inp = get_input(2020, 7)
-# print(inp)
-# inp = """light red bags contain 1 bright white bag, 2 muted yellow bags.
-# dark orange bags contain 3 bright white bags, 4 muted yellow bags.
-# bright white bags contain 1 shiny gold bag.
-# muted yellow bags contain 2 shiny gold bags, 9 faded blue bags.
-# shiny gold bags contain 1 dark olive bag, 2 vibrant plum bags.
-# dark olive bags contain 3 faded blue bags, 4 dotted black bags.
-# vibrant plum bags contain 5 faded blue bags, 6 dotted black bags.
-# faded blue bags contain no other bags.
-# dotted black bags contain no other bags."""
-# for i in inp.split("\n"):
-#     print(i)
-
-rules = inp.strip().split("\n")
-rules = lmap(lambda s: s.replace(".", ""), rules)
-rules = lmap(lambda s: s.replace(" bags", "").replace(" bag", ""), rules)
-rules = [tuple(rule.split(" contain ")) for rule in rules]
-rules = [(k, v.split(", ")) for k, v in rules]
-# for r in rules:
-#     print(r)
-
-import re
-
-graph = defaultdict(set)
-for bag, contains in rules:
-    contains = lmap(lambda s: re.sub(r"(\d{1} )", "", s), contains)
-    for x in contains:
-        graph[x].add(bag)
-
-# print(graph["shiny gold"])
 
 
-def dfs(adj, node, visited, depth):
+def parse(rule):
+    bag, targets = re.compile(r"(.+) bags contain (.+)").match(rule).groups()
+    targets = [
+        match.groups()
+        for t in targets.split(", ")
+        if (match := re.compile(r"(\d+) (.+) bag*").match(t))
+    ]
+    return bag, targets
+
+
+rules = lmap(parse, inp.strip().split("\n"))
+
+
+# part 1
+
+
+def graph1(rules):
+    graph = defaultdict(set)
+    for bag, targets in rules:
+        for num, target in targets:
+            graph[target].add(bag)
+    return graph
+
+
+def traverse1(adj, node, visited):
     visited.add(node)
-    for n in adj.get(node, set()):  # get() since adj[] would mutate dict
+    for n in adj.get(node, set()):
         if n not in visited:
-            dfs(adj, n, visited, depth + 1)
+            traverse1(adj, n, visited)
     return visited
 
 
-print(len(dfs(graph, "shiny gold", set(), 0)) - 1)
-# visiteds = []
-# for node in graph:
-#     print(node)
-#     visiteds.append(dfs(graph, node, set(), 0))
+graph = graph1(rules)
+print(len(traverse1(graph, "shiny gold", set())) - 1)
 
 
-# # # print(visiteds)
-# # for x in visiteds:
-# #     if "shiny gold" in x:
-# #         print(x)
+# part 2
+
+
+def graph2(rules):
+    graph = defaultdict(set)
+    weights = {}
+    for bag, targets in rules:
+        for num, target in targets:
+            graph[bag].add(target)
+            weights[(bag, target)] = int(num)
+    return graph, weights
+
+
+def traverse2(adj, weights, node, mult):
+    count = 0
+    for neighbor in adj.get(node, set()):
+        weight = weights[(node, neighbor)]
+        count += weight + traverse2(adj, weights, neighbor, weight)
+    return mult * count
+
+
+graph, weights = graph2(rules)
+print(traverse2(graph, weights, "shiny gold", 1))
