@@ -2,55 +2,61 @@ from _utils import *
 
 
 inp = get_input(2020, 8)
-print(len(inp.split("\n")))
-# inp = """nop +0
-# acc +1
-# jmp +4
-# acc +3
-# jmp -3
-# acc -99
-# acc +1
-# jmp -4
-# acc +6"""
+
 tape = inp.strip().split("\n")
 tape = list(enumerate(tape))
-print(tape[:10])
 
 
-def parse(instruction):
-    return instruction.split()
+def evaluate(tape, break_infinite_loop):
+    try:
+        acc = 0
+        i, instruction = tape[0]
+        seen = []
+
+        while True:
+            if i in seen:
+                return acc if break_infinite_loop else None
+
+            seen.append(i)
+            instr, arg = instruction.split()
+
+            if instr == "nop":
+                i, instruction = tape[i + 1]
+            elif instr == "acc":
+                sign, num = arg[:1], arg[1:]
+                if sign == "+":
+                    acc += int(num)
+                elif sign == "-":
+                    acc -= int(num)
+                i, instruction = tape[i + 1]
+            elif instr == "jmp":
+                sign, num = arg[:1], arg[1:]
+                if sign == "+":
+                    i, instruction = tape[i + int(num)]
+                elif sign == "-":
+                    i, instruction = tape[i - int(num)]
+    except IndexError:
+        return acc
 
 
-acc = 0
+# part 1
+print(evaluate(tape, True))
 
-i, instruction = tape[0]
-seen = []
-
-while True:
-    if i in seen:
-        break
-    seen.append(i)
-    instr, arg = instruction.split()
-    if instr == "nop":
-        i, instruction = tape[i + 1]
-    elif instr == "acc":
-        sign, num = arg[:1], arg[1:]
-        if sign == "+":
-            acc += int(num)
-        elif sign == "-":
-            acc -= int(num)
-        i, instruction = tape[i + 1]
-    elif instr == "jmp":
-        sign, num = arg[:1], arg[1:]
-        if sign == "+":
-            i, instruction = tape[i + int(num)]
-        elif sign == "-":
-            i, instruction = tape[i - int(num)]
+# part 2
+tapes = []
+for x in range(len(tape)):
+    tape_ = list(tape)
+    i, t = tape_.pop(x)
+    instr, arg = t.split()
+    if instr == "jmp":
+        tape_.insert(x, (i, f"nop {arg}"))
+    elif instr == "nop":
+        tape_.insert(x, (i, f"jmp {arg}"))
     else:
-        raise ValueError(i, instruction)
+        tape_.insert(x, (i, t))
+    tapes.append(tape_)
 
-print(acc)
-# for i, instruction in tape:
-#     seen.append(i)
-
-#     print(instruction)
+for tape in tapes:
+    acc = evaluate(tape, False)
+    if acc:
+        print(acc)
