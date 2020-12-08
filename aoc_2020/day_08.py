@@ -3,36 +3,32 @@ from _utils import *
 
 
 inp = get_input(2020, 8)
-
 tape = inp.strip().split("\n")
-tape = list(enumerate(tape))
 
 
-def step(i, instruction, acc):
+def step(i, acc):
     op = {"+": add, "-": sub}
-    instr, arg = instruction.split()
+    instr, arg = tape[i].split()
+    sign, num = arg[:1], arg[1:]
     if instr == "nop":
         i += 1
     elif instr == "acc":
-        sign, num = arg[:1], arg[1:]
         i += 1
         acc = op[sign](acc, int(num))
     elif instr == "jmp":
-        sign, num = arg[:1], arg[1:]
         i = op[sign](i, int(num))
     else:
-        raise ValueError(i, instruction)
-    return *tape[i], acc
+        raise ValueError(i)
+    return i, acc
 
 
 def evaluate(tape, return_state_at_repeated):
-    seen = []
-    i, instruction, acc = step(*tape[0], 0)
+    seen, i, acc = set(), 0, 0
     while i + 1 < len(tape):
+        seen.add(i)
+        i, acc = step(i, acc)
         if i in seen:
             return acc if return_state_at_repeated else None
-        seen.append(i)
-        i, instruction, acc = step(i, instruction, acc)
     return acc
 
 
@@ -45,13 +41,13 @@ print(evaluate(tape, True))
 def swaps(tape):
     for i in range(len(tape)):
         tape_ = list(tape)
-        _, t = tape_.pop(i)
+        t = tape_.pop(i)
         instr, arg = t.split()
         if instr == "jmp":
             t = f"nop {arg}"
         elif instr == "nop":
             t = f"jmp {arg}"
-        tape_.insert(i, (i, t))
+        tape_.insert(i, t)
         yield tape_
 
 
