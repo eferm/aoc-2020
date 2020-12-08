@@ -1,3 +1,4 @@
+from operator import add, sub
 from _utils import *
 
 
@@ -7,56 +8,52 @@ tape = inp.strip().split("\n")
 tape = list(enumerate(tape))
 
 
-def evaluate(tape, break_infinite_loop):
-    try:
-        acc = 0
-        i, instruction = tape[0]
-        seen = []
+def step(i, instruction, acc):
+    op = {"+": add, "-": sub}
+    instr, arg = instruction.split()
+    if instr == "nop":
+        i += 1
+    if instr == "acc":
+        sign, num = arg[:1], arg[1:]
+        i += 1
+        acc = op[sign](acc, int(num))
+    elif instr == "jmp":
+        sign, num = arg[:1], arg[1:]
+        i = op[sign](i, int(num))
+    return *tape[i], acc
 
-        while True:
-            if i in seen:
-                return acc if break_infinite_loop else None
 
-            seen.append(i)
-            instr, arg = instruction.split()
-
-            if instr == "nop":
-                i, instruction = tape[i + 1]
-            elif instr == "acc":
-                sign, num = arg[:1], arg[1:]
-                if sign == "+":
-                    acc += int(num)
-                elif sign == "-":
-                    acc -= int(num)
-                i, instruction = tape[i + 1]
-            elif instr == "jmp":
-                sign, num = arg[:1], arg[1:]
-                if sign == "+":
-                    i, instruction = tape[i + int(num)]
-                elif sign == "-":
-                    i, instruction = tape[i - int(num)]
-    except IndexError:
-        return acc
+def evaluate(tape, return_state_at_repeated):
+    seen = []
+    i, instruction, acc = step(*tape[0], 0)
+    while i + 1 < len(tape):
+        if i in seen:
+            return acc if return_state_at_repeated else None
+        seen.append(i)
+        i, instruction, acc = step(i, instruction, acc)
+    return acc
 
 
 # part 1
 print(evaluate(tape, True))
 
 # part 2
-tapes = []
-for x in range(len(tape)):
-    tape_ = list(tape)
-    i, t = tape_.pop(x)
-    instr, arg = t.split()
-    if instr == "jmp":
-        tape_.insert(x, (i, f"nop {arg}"))
-    elif instr == "nop":
-        tape_.insert(x, (i, f"jmp {arg}"))
-    else:
-        tape_.insert(x, (i, t))
-    tapes.append(tape_)
 
-for tape in tapes:
+
+def swaps(tape):
+    for i in range(len(tape)):
+        tape_ = list(tape)
+        _, t = tape_.pop(i)
+        instr, arg = t.split()
+        if instr == "jmp":
+            t = f"nop {arg}"
+        elif instr == "nop":
+            t = f"jmp {arg}"
+        tape_.insert(i, (i, t))
+        yield tape_
+
+
+for tape in swaps(tape):
     acc = evaluate(tape, False)
     if acc:
         print(acc)
