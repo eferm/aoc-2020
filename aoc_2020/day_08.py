@@ -13,13 +13,15 @@ def step(i, instruction, acc):
     instr, arg = instruction.split()
     if instr == "nop":
         i += 1
-    if instr == "acc":
+    elif instr == "acc":
         sign, num = arg[:1], arg[1:]
         i += 1
         acc = op[sign](acc, int(num))
     elif instr == "jmp":
         sign, num = arg[:1], arg[1:]
         i = op[sign](i, int(num))
+    else:
+        raise ValueError(i, instruction)
     return *tape[i], acc
 
 
