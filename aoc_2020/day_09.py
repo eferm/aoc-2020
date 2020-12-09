@@ -8,7 +8,7 @@ nums = lmap(int, inp.strip().split())
 PRE = 25
 
 
-def subsetsum(x, seq, r=2):
+def sums_to(x, seq, r=2):
     for t in itertools.combinations(seq, r):
         if sum(t) == x:
             return True
@@ -20,7 +20,7 @@ def subsetsum(x, seq, r=2):
 
 def find_invalid():
     for i in range(PRE, len(nums)):
-        if not subsetsum(nums[i], nums[i - PRE : i]):
+        if not sums_to(nums[i], nums[i - PRE : i]):
             return nums[i]
 
 
