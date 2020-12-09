@@ -1,7 +1,6 @@
 # Copyright Ryan Norris https://github.com/rynorris/adventofcode
 import os
 import re
-import sys
 
 import requests
 from dotenv import load_dotenv
@@ -69,20 +68,3 @@ def filterre(r, seq):
 
 def translate(mapping, s):
     return s.translate(str.maketrans(mapping))
-
-
-def print_grid_dict(grid, charmap=None, default=0):
-    # Expects a grid of (x, y) -> val
-    # Charmap maps vals to tokens for printing.
-    # Otherwise prints str(val).
-    min_x = min([x for x, y in grid.keys()])
-    max_x = max([x for x, y in grid.keys()])
-    min_y = min([y for x, y in grid.keys()])
-    max_y = max([y for x, y in grid.keys()])
-    for y in range(min_y, max_y + 1):
-        for x in range(min_x, max_x + 1):
-            v = grid.get((x, y), default)
-            if charmap:
-                v = charmap[v]
-            sys.stdout.write(str(v))
-        sys.stdout.write("\n")
