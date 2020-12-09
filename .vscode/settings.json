@@ -13,7 +13,7 @@
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
-        "--ignore=E402,E731,F403,F405",
+        "--ignore=E203,E402,E731,F403,F405",
     ],
     "python.formatting.blackArgs": [
         "--line-length",
