@@ -24,19 +24,15 @@ print(d.count(1) * d.count(3))
 
 
 def graph(seq, branch=3):
-    g = {}
-    for s in seq:
-        g[s] = [x for x in seq if s < x <= s + branch]
-    return g
+    return {s: [x for x in seq if s < x <= s + branch] for s in seq}
 
 
 def dfs(counts, graph, u, t):
     if u == t:
         return 1
-    else:
-        if not counts.get(u, None):
-            counts[u] = sum(dfs(counts, graph, c, t) for c in graph[u])
-        return counts[u]
+    if u not in counts:
+        counts[u] = sum(dfs(counts, graph, c, t) for c in graph[u])
+    return counts[u]
 
 
 print(dfs({}, graph([0] + adapters), 0, max(adapters)))
