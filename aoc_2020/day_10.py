@@ -2,26 +2,41 @@ from _utils import *
 
 
 inp = get_input(2020, 10)
-# print(inp[:80])
-# print(len(inp.strip().split("\n")))
-
-
 adapters = lmap(int, inp.strip().split())
-adapters = sorted(adapters)
 adapters += [max(adapters) + 3]
-# print(adapters)
 
 
-jolt = 0
-a = []
-diffs = []
+# part 1
 
-for i in range(max(adapters) + 1):
-    if i in adapters:
-        adapters.remove(i)
-        a.append(i)
-        diffs.append(i - jolt)
-        jolt = i
 
-print(a)
-print(len([x for x in diffs if x == 1]) * len([x for x in diffs if x == 3]))
+def diffs(curr, seq):
+    i, seq_ = curr, sorted(seq)
+    while i < len(seq_):
+        yield seq_[i] - curr
+        i, curr = i + 1, seq_[i]
+
+
+d = list(diffs(0, adapters))
+print(d.count(1) * d.count(3))
+
+
+# part 2
+
+
+def graph(seq, branch=3):
+    g = {}
+    for s in seq:
+        g[s] = [x for x in seq if s < x <= s + branch]
+    return g
+
+
+def dfs(counts, graph, u, t):
+    if u == t:
+        return 1
+    else:
+        if not counts.get(u, None):
+            counts[u] = sum(dfs(counts, graph, c, t) for c in graph[u])
+        return counts[u]
+
+
+print(dfs({}, graph([0] + adapters), 0, max(adapters)))
