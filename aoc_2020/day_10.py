@@ -10,7 +10,7 @@ adapters += [max(adapters) + 3]
 
 
 def diffs(curr, seq):
-    i, seq_ = curr, sorted(seq)
+    i, seq_ = 0, sorted(seq)
     while i < len(seq_):
         yield seq_[i] - curr
         i, curr = i + 1, seq_[i]
