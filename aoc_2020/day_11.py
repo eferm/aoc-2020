@@ -1,4 +1,3 @@
-import copy
 import itertools
 from _utils import *
 
@@ -11,106 +10,59 @@ for y, row in enumerate(inp.strip().split()):
         seats[(x, y)] = v
 
 
-seats = lmap(list, inp.strip().split())
-X = len(seats[0])
-Y = len(seats)
+def step(seats, consider_func, min_occupied):
+    for t, v in seats.items():
+        adj = list(consider_func(seats, *t))
+        if seats[t] == "L" and adj.count("#") == 0:
+            yield t, "#"
+        elif seats[t] == "#" and adj.count("#") >= min_occupied:
+            yield t, "L"
+        else:
+            yield t, seats[t]
 
 
-def flat(m):
-    return [x for row in m for x in row]
+def evolve(seats, consider_func, min_occupied):
+    prev = seats
+    while (curr := dict(step(prev, consider_func, min_occupied))) != prev:
+        prev = curr
+    return curr
 
 
-def equals(m1, m2):
-    eq = []
-    for y in range(len(m1)):
-        for x in range(len(m1[0])):
-            eq.append(m1[y][x] == m2[y][x])
-    return all(eq)
+# part 1
 
 
-def adjacent(x, y, seats):
-    rows = seats[max(y - 1, 0) : min(y + 2, Y)]
-    return [row[max(x - 1, 0) : min(x + 2, X)] for row in rows]
+def adjacent(seats, x, y):
+    for t in itertools.product(range(x - 1, x + 2), range(y - 1, y + 2)):
+        if (v := seats.get(t, None)) and t != (x, y):
+            yield v
 
 
-def visible(x, y, seats):
-    dirs = {
-        "nw": (
-            range(max(x - 1, -1), -1, -1),
-            range(max(y - 1, -1), -1, -1),
-        ),
-        "n": (
-            itertools.repeat(x),
-            range(max(y - 1, -1), -1, -1),
-        ),
-        "ne": (
-            range(min(x + 1, X), X),
-            range(max(y - 1, -1), -1, -1),
-        ),
-        "e": (
-            range(min(x + 1, X), X),
-            itertools.repeat(y),
-        ),
-        "se": (
-            range(min(x + 1, X), X),
-            range(min(y + 1, Y), Y),
-        ),
-        "s": (
-            itertools.repeat(x),
-            range(min(y + 1, Y), Y),
-        ),
-        "sw": (
-            range(max(x - 1, -1), -1, -1),
-            range(min(y + 1, Y), Y),
-        ),
-        "w": (
-            range(max(x - 1, -1), -1, -1),
-            itertools.repeat(y),
-        ),
-    }
-    v = []
-    for k, ranges in dirs.items():
-        for x_, y_ in zip(*ranges):
-            val = seats[y_][x_]
-            v.append(val)
-            if val in ["L", "#"]:
+s1 = evolve(seats, adjacent, 4)
+print(list(s1.values()).count("#"))
+
+
+# part 2
+
+
+def visible(seats, x, y):
+    dirs = [
+        (-1, -1),
+        (0, -1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+        (0, 1),
+        (-1, 1),
+        (-1, 0),
+    ]
+    for dx, dy in dirs:
+        x_, y_ = x, y
+        while vis := seats.get((x_ + dx, y_ + dy), None):
+            yield vis
+            if vis in ["L", "#"]:
                 break
-    return v
+            x_, y_ = x_ + dx, y_ + dy
 
 
-def occupy(m):
-    to_occupy = []
-    for y, row in enumerate(m):
-        for x, v in enumerate(row):
-            adjacent = visible(x, y, m)
-            if v == "L" and adjacent.count("#") == 0:
-                to_occupy.append((x, y))
-    n = copy.deepcopy(m)
-    for x, y in to_occupy:
-        n[y][x] = "#"
-    return n
-
-
-def empty(m):
-    to_empty = []
-    for y, row in enumerate(m):
-        for x, v in enumerate(row):
-            adjacent = visible(x, y, m)
-            if v == "#" and adjacent.count("#") >= 5:
-                to_empty.append((x, y))
-    n = copy.deepcopy(m)
-    for x, y in to_empty:
-        n[y][x] = "L"
-    return n
-
-
-funcs = itertools.cycle([occupy, empty])
-prev = list(seats)
-curr = next(funcs)(prev)
-
-while not equals(prev, curr):
-    prev = curr
-    curr = next(funcs)(curr)
-
-
-print(flat(curr).count("#"))
+s2 = evolve(seats, visible, 5)
+print(list(s2.values()).count("#"))
