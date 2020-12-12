@@ -1,6 +1,7 @@
 # Copyright Ryan Norris https://github.com/rynorris/adventofcode
 import os
 import re
+from typing import Dict, Tuple, TypeVar
 
 import requests
 from dotenv import load_dotenv
@@ -68,3 +69,16 @@ def filterre(r, seq):
 
 def translate(mapping, s):
     return s.translate(str.maketrans(mapping))
+
+
+T = TypeVar("T")
+
+
+def gridprint(grid: Dict[Tuple[int, int], T], default: T = " ") -> None:
+    xs = [x for x, _ in grid]
+    ys = [y for _, y in grid]
+    for y in range(min(ys), max(ys) + 1):
+        row = []
+        for x in range(min(xs), max(xs) + 1):
+            row.append(str(grid.get((x, y), default)))
+        print("".join(row))
