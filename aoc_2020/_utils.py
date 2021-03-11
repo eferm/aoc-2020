@@ -7,8 +7,8 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
-SESSION = os.getenv("SESSION")
 
+SESSION = os.getenv("SESSION")
 INPUTS_DIR = os.path.join(os.path.dirname(__file__), "inputs")
 
 
