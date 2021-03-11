@@ -1,4 +1,5 @@
 import re
+
 from _utils import *
 
 inp = get_input(2020, 4)

@@ -1,6 +1,6 @@
 import itertools
-from _utils import *
 
+from _utils import *
 
 inp = get_input(2020, 9)
 nums = lmap(int, inp.strip().split())

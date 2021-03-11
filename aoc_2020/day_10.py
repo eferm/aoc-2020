@@ -1,6 +1,5 @@
 from _utils import *
 
-
 inp = get_input(2020, 10)
 
 adapters = lmap(int, inp.strip().split())

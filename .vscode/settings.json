@@ -1,21 +1,27 @@
 {
-    "editor.formatOnSave": true,
     "editor.minimap.enabled": false,
     "editor.renderWhitespace": "all",
-    "editor.rulers": [
-        72,
-        79,
-    ],
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.rulers": [
+            72,
+            79,
+        ],
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+        },
+    },
     "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "79"
+    ],
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
+    "python.linting.mypyEnabled": false,
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
         "--ignore=E203,E402,E731,F403,F405",
     ],
-    "python.formatting.blackArgs": [
-        "--line-length",
-        "79"
-    ]
 }

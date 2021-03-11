@@ -1,7 +1,7 @@
 import math
 from operator import add, sub
-from _utils import *
 
+from _utils import *
 
 inp = get_input(2020, 12)
 instructions = inp.strip().split()

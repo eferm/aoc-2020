@@ -1,5 +1,6 @@
 import re
 from collections import Counter
+
 from _utils import *
 
 inp = get_input(2020, 2)

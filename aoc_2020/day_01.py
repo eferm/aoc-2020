@@ -1,5 +1,6 @@
 import math
 from itertools import combinations
+
 from _utils import *
 
 inp = get_input(2020, 1)

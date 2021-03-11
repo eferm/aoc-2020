@@ -1,4 +1,5 @@
 import math
+
 from _utils import *
 
 inp = get_input(2020, 3)

@@ -1,7 +1,7 @@
 import re
 from collections import defaultdict
-from _utils import *
 
+from _utils import *
 
 inp = get_input(2020, 7)
 

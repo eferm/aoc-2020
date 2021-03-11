@@ -1,7 +1,7 @@
 import itertools
 import math
-from _utils import *
 
+from _utils import *
 
 inp = get_input(2020, 13)
 

@@ -1,6 +1,6 @@
 from operator import add, sub
-from _utils import *
 
+from _utils import *
 
 inp = get_input(2020, 8)
 tape = inp.strip().split("\n")
